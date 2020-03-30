@@ -1,22 +1,30 @@
 from scipy.spatial import distance
+from sklearn import datasets
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 
 
 def euc(a, b):
     return distance.euclidean(a, b)
 
 
-class ScrappyKNN():
-    def fit(self, X_train, y_train):
-        self.X_train = X_train
-        self.y_train = y_train
+class ScrappyKNN:
 
-    def predict(self, X_test):
-        predictions = []
-        for row in X_test:
+    def __init__(self):
+        self.X_train = None
+        self.y_train = None
+
+    def fit(self, X_train_new, y_train_new):
+        self.X_train = X_train_new
+        self.y_train = y_train_new
+
+    def predict(self, X_test_new):
+        predictions_array = []
+        for row in X_test_new:
             label = self.closest(row)
-            predictions.append(label)
+            predictions_array.append(label)
 
-        return predictions
+        return predictions_array
 
     def closest(self, row):
         # Distance from test point to first training point
@@ -30,16 +38,12 @@ class ScrappyKNN():
         return self.y_train[best_index]  # closest example
 
 
-from sklearn import datasets
-
 iris = datasets.load_iris()
 
 X = iris.data
 y = iris.target
 
-from sklearn.model_selection import train_test_split
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, 0.5)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5)
 
 # from sklearn import tree
 # my_classifier = tree.DecisionTreeClassifier()
@@ -52,7 +56,5 @@ my_classifier = ScrappyKNN()
 my_classifier.fit(X_train, y_train)
 
 predictions = my_classifier.predict(X_test)
-
-from sklearn.metrics import accuracy_score
 
 print(accuracy_score(y_test, predictions))
